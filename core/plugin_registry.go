@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/danielmiessler/fabric/plugins/ai/exolab"
+	"github.com/danielmiessler/fabric/plugins/ai/grokai"
 	"github.com/danielmiessler/fabric/plugins/strategy"
 
 	"github.com/samber/lo"
@@ -17,6 +18,7 @@ import (
 	"github.com/danielmiessler/fabric/plugins/ai"
 	"github.com/danielmiessler/fabric/plugins/ai/anthropic"
 	"github.com/danielmiessler/fabric/plugins/ai/azure"
+	"github.com/danielmiessler/fabric/plugins/ai/cerebras"
 	"github.com/danielmiessler/fabric/plugins/ai/deepseek"
 	"github.com/danielmiessler/fabric/plugins/ai/dryrun"
 	"github.com/danielmiessler/fabric/plugins/ai/gemini"
@@ -71,6 +73,8 @@ func NewPluginRegistry(db *fsdb.Db) (ret *PluginRegistry, err error) {
 		deepseek.NewClient(),
 		exolab.NewClient(),
 		litellm.NewClient(),
+		grokai.NewClient(),
+		cerebras.NewClient(),
 	)
 	_ = ret.Configure()
 

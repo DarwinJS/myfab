@@ -1,4 +1,7 @@
 <div align="center">
+Fabric is graciously supported by…
+
+[![Github Repo Tagline](https://github.com/user-attachments/assets/96ab3d81-9b13-4df4-ba09-75dee7a5c3d2)](https://warp.dev/fabric)
 
 <img src="./images/fabric-logo-gif.gif" alt="fabriclogo" width="400" height="400"/>
 
@@ -15,7 +18,7 @@
 </p>
 
 [Updates](#updates) •
-[What and Why](#whatandwhy) •
+[What and Why](#what-and-why) •
 [Philosophy](#philosophy) •
 [Installation](#Installation) •
 [Usage](#Usage) •
@@ -65,6 +68,7 @@
   - [Helper Apps](#helper-apps)
     - [`to_pdf`](#to_pdf)
     - [`to_pdf` Installation](#to_pdf-installation)
+    - [`code_helper`](#code_helper)
   - [pbpaste](#pbpaste)
   - [Web Interface](#web-interface)
     - [Installing](#installing)
@@ -78,9 +82,9 @@
 ## Updates
 
 > [!NOTE]
-> February 24, 2025
+> April 16, 2025
 >
-> - Fabric now supports Sonnet 3.7! Update and use `-S` to select it as your default if you want, or just use the shortcut `-m claude-3-7-sonnet-latest`. Enjoy!
+> - Fabric now supports Grok (from XAI)! Update and use `-S` to select it as your default if you want, or just use the shortcut `-m grok-3-beta`. Enjoy!
 
 ## What and why
 
@@ -599,6 +603,20 @@ go install github.com/danielmiessler/fabric/plugins/tools/to_pdf@latest
 
 Make sure you have a LaTeX distribution (like TeX Live or MiKTeX) installed on your system, as `to_pdf` requires `pdflatex` to be available in your system's PATH.
 
+### `code_helper`
+
+`code_helper` is used in conjunction with the `create_coding_feature` pattern.
+It generates a `json` representation of a directory of code that can be fed into an AI model
+with instructions to create a new feature or edit the code in a specified way.
+
+See [the Create Coding Feature Pattern README](./patterns/create_coding_feature/README.md) for details.
+
+Install it first using:
+
+```bash
+go install github.com/danielmiessler/fabric/plugins/tools/code_helper@latest
+```
+
 ## pbpaste
 
 The [examples](#examples) use the macOS program `pbpaste` to paste content from the clipboard to pipe into `fabric` as the input. `pbpaste` is not available on Windows or Linux, but there are alternatives.
@@ -697,6 +715,14 @@ The Streamlit UI supports clipboard operations across different platforms:
 <a href="https://github.com/xssdoctor"><img src="https://avatars.githubusercontent.com/u/9218431?v=4" title="Jonathan Dunn" width="50" height="50"></a>
 <a href="https://github.com/sbehrens"><img src="https://avatars.githubusercontent.com/u/688589?v=4" title="Scott Behrens" width="50" height="50"></a>
 <a href="https://github.com/agu3rra"><img src="https://avatars.githubusercontent.com/u/10410523?v=4" title="Andre Guerra" width="50" height="50"></a>
+
+### Contributors
+
+<a href="https://github.com/danielmiessler/fabric/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=danielmiessler/fabric" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
 
 `fabric` was created by <a href="https://danielmiessler.com/subscribe" target="_blank">Daniel Miessler</a> in January of 2024.
 <br /><br />

@@ -2,7 +2,9 @@ package core
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	goopenai "github.com/sashabaranov/go-openai"
@@ -28,6 +30,7 @@ type Chatter struct {
 	strategy           string
 }
 
+// Send processes a chat request and applies any file changes if using the create_coding_feature pattern
 func (o *Chatter) Send(request *common.ChatRequest, opts *common.ChatOptions) (session *fsdb.Session, err error) {
 	if session, err = o.BuildSession(request, opts.Raw); err != nil {
 		return
@@ -77,6 +80,30 @@ func (o *Chatter) Send(request *common.ChatRequest, opts *common.ChatOptions) (s
 		session = nil
 		err = fmt.Errorf("empty response")
 		return
+	}
+
+	// Process file changes if using the create_coding_feature pattern
+	if request.PatternName == "create_coding_feature" {
+		// Look for file changes in the response
+		summary, fileChanges, parseErr := common.ParseFileChanges(message)
+		if parseErr != nil {
+			fmt.Printf("Warning: Failed to parse file changes: %v\n", parseErr)
+		} else if len(fileChanges) > 0 {
+			// Get the project root - use the current directory
+			projectRoot, err := os.Getwd()
+			if err != nil {
+				fmt.Printf("Warning: Failed to get current directory: %v\n", err)
+				// Continue without applying changes
+			} else {
+				if applyErr := common.ApplyFileChanges(projectRoot, fileChanges); applyErr != nil {
+					fmt.Printf("Warning: Failed to apply file changes: %v\n", applyErr)
+				} else {
+					fmt.Println("Successfully applied file changes.")
+					fmt.Printf("You can review the changes with 'git diff' if you're using git.\n\n")
+				}
+			}
+		}
+		message = summary
 	}
 
 	session.Append(&goopenai.ChatCompletionMessage{Role: goopenai.ChatMessageRoleAssistant, Content: message})
@@ -158,8 +185,10 @@ func (o *Chatter) BuildSession(request *common.ChatRequest, raw bool) (session *
 		}
 	}
 
-	if request.Language != "" {
-		systemMessage = fmt.Sprintf("%s. Please use the language '%s' for the output.", systemMessage, request.Language)
+	// Apply refined language instruction if specified
+	if request.Language != "" && request.Language != "en" {
+		// Refined instruction: Execute pattern using user input, then translate the entire response.
+		systemMessage = fmt.Sprintf("%s\n\nIMPORTANT: First, execute the instructions provided in this prompt using the user's input. Second, ensure your entire final response, including any section headers or titles generated as part of executing the instructions, is written ONLY in the %s language.", systemMessage, request.Language)
 	}
 
 	if raw {
@@ -185,7 +214,7 @@ func (o *Chatter) BuildSession(request *common.ChatRequest, raw bool) (session *
 
 	if session.IsEmpty() {
 		session = nil
-		err = fmt.Errorf(NoSessionPatternUserMessages)
+		err = errors.New(NoSessionPatternUserMessages)
 	}
 	return
 }
